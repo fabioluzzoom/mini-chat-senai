@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ensinar - Mini-Chat</title>
+  <style>
+    /* Layout geral */
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background: #f0f2f5;
+      color: #212121;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Container formulário */
+    #formulario-container {
+      background: #ffffff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #dee2e6;
+    }
+    h2 {
+      text-align: center;
+      color: #343a40;
+      font-weight: 600;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      border-radius: 5px;
+      background-color: #ffffff;
+      border: 1px solid #ced4da;
+      color: #212121;
+      box-sizing: border-box;
+      font-size: 1rem;
+    }
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+    button {
+      margin-top: 20px;
+      padding: 15px;
+      width: 100%;
+      background: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: background-color 0.2s ease;
+    }
+    button:hover {
+      background: #495057;
+    }
+    #mensagem {
+      margin-top: 15px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div id="formulario-container">
+    <h2>Ensinar o Mini-Chat</h2>
+    <input type="text" id="pergunta" placeholder="Digite a nova pergunta..." />
+    <textarea id="resposta" placeholder="Digite a resposta correspondente..."></textarea>
+    <button onclick="ensinar()">Ensinar</button>
+    <p id="mensagem"></p>
+  </div>
+
+  <script>
+    // --- SCRIPT DO CADASTRO ---
+    
+    async function ensinar() {
+      // 1. Pega os dados do formulário
+      const pergunta = document.getElementById("pergunta").value;
+      const resposta = document.getElementById("resposta").value;
+      const mensagemP = document.getElementById("mensagem");
+
+      // 2. Envia os dados para o back-end
+      const res = await fetch("/ensinar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ pergunta, resposta })
+      });
+
+      // 3. Recebe a resposta e exibe a mensagem
+      const dados = await res.json();
+      mensagemP.innerText = dados.mensagem;
+      mensagemP.style.color = "#212121";
+
+      // Limpa os campos após o envio
+      document.getElementById("pergunta").value = "";
+      document.getElementById("resposta").value = "";
+    }
+  </script>
+</body>
+</html>

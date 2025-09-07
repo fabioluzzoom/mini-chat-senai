@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mini-Chat</title>
+  <style>
+    /* Layout geral */
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #f5f5f5;
+      color: #212121;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    /* Container chat */
+    #chat-container {
+      width: 100%;
+      max-width: 800px;
+      height: 90vh;
+      background-color: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid #e0e0e0;
+    }
+    h1 {
+      text-align: center;
+      color: #212121;
+      margin: 20px 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    #messages {
+      flex-grow: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .message {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 18px;
+      max-width: 80%;
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+    }
+    .user-message {
+      background-color: #6c757d; 
+      color: #ffffff;
+      margin-left: auto;
+    }
+    .bot-message {
+      background-color: #e9ecef;
+      color: #212121;
+      margin-right: auto;
+    }
+    .message strong {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .user-message strong {
+      color: #ffffff;
+    }
+    .bot-message strong {
+      color: #495057;
+    }
+    #input-container {
+      padding: 20px;
+      border-top: 1px solid #e0e0e0;
+    }
+    #input {
+      width: 100%;
+      padding: 15px;
+      background-color: #ffffff;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #212121;
+      box-sizing: border-box;
+    }
+    #input::placeholder {
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+  <div id="chat-container">
+    <h1>Mini-Chat</h1>
+    <div id="messages"></div>
+    <div id="input-container">
+      <input type="text" id="input" placeholder="Digite sua pergunta e pressione Enter..." />
+    </div>
+  </div>
+
+  <script>
+    // --- SCRIPT DO FRONT-END ---
+
+    // Seleciona os elementos do HTML
+    const messagesDiv = document.getElementById("messages");
+    const inputField = document.getElementById("input");
+
+    // Exibe a mensagem de boas-vindas
+    window.onload = () => {
+      messagesDiv.innerHTML += `
+        <div class="message bot-message">
+          <strong>Mini-Chat:</strong>
+          Olá! Como posso te ajudar hoje?
+        </div>
+      `;
+    };
+
+    // Quando o usuário pressiona "Enter"...
+    inputField.addEventListener("keypress", async (e) => {
+      if (e.key === "Enter" && inputField.value.trim() !== "") {
+        const pergunta = inputField.value;
+
+        // 1. Mostra a pergunta do usuário na tela
+        messagesDiv.innerHTML += `
+          <div class="message user-message">
+            <strong>Você:</strong>
+            ${pergunta}
+          </div>
+        `;
+        
+        // Limpa o campo de input
+        inputField.value = "";
+        
+        // 2. Envia a pergunta para o back-end
+        const res = await fetch("/perguntar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pergunta: pergunta })
+        });
+
+        // 3. Mostra a resposta do back-end na tela
+        const dados = await res.json();
+        messagesDiv.innerHTML += `
+          <div class="message bot-message">
+            <strong>Mini-Chat:</strong>
+            ${dados.resposta}
+          </div>
+        `;
+        
+        // Rola a tela de mensagens para baixo
+        messagesDiv.scrollTop = messagesDiv.scrollHeight;
+      }
+    });
+  </script>
+</body>
+</html>
