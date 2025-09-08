@@ -36,8 +36,8 @@ O seu principal objetivo é demonstrar de forma clara a **arquitetura de 3 camad
     ```
 
 5.  **Abra no navegador:**
-    * `http://localhost:3000`
-    * `http://localhost:3000/ensinar.html`
+    * http://localhost:3000
+    * http://localhost:3000/ensinar.html
 
 ## 👨‍💻 Autor
 * **Fabio Luz**
